@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.css";
+import ReactJson from 'react-json-view'
 
-function App() {
+// import the fingerprintjs opensource library
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+
+export default function App() {
+  const [fpHash, setFpHash] = useState("");
+  const [fpInfo, setFpInfo] = useState("");
+
+  // create and set the fingerprint as soon as
+  // the component mounts
+  useEffect(() => {
+    const setFp = async () => {
+      const fp = await FingerprintJS.load();
+      const fpResult = await fp.get();
+
+      setFpHash(fpResult.visitorId);
+      setFpInfo(fpResult);
+    };
+
+    setFp();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>This is the fingerprint hash</h1>
+      <h3>Hash: {fpHash}</h3>
+      <hr/>
+      <ReactJson src={fpInfo} />
     </div>
   );
 }
-
-export default App;
